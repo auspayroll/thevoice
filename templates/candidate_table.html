@@ -1,0 +1,13 @@
+
+<table>
+<tr><th>Name</th><th>Dob</th><th>Average Score</th><th>Team</th><th>Team Score</th></tr>
+{% for c in candidates %}
+	<tr>
+		<td>{{ c }}</td>
+		<td>{{ c.dob }}</td>
+		<td>{{ c.average_score }}</td>
+		<td><a href="{% url 'team' c.team.pk %}">{{ c.team }}</a></td>
+		<td>{{ c.team.average_score }}</td>
+	</tr>
+{% endfor %}
+</table>

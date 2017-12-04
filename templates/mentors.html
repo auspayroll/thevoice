@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<h1>Mentors</h1>
+
+<table>
+{% for m in mentors %}
+	<tr>
+		<td>{{ m }}</td>
+	</tr>
+{% endfor %}
+</table>
+{% endblock %}

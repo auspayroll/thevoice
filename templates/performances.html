@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+{% include "performance_table.html" with performances=performances only %}
+{% endblock %}

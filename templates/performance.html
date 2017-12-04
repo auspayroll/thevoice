@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+
+<h1>Performance</h1>
+
+<b>Date</b>: {{ performance.date }} &nbsp;<b>Song:</b> {{ performance.song }} <br/>
+<b>Candidate:</b> {{ performance.candidate }} &nbsp;<b>Average Score:</b> {{ performance.average_score }}<br/>
+<b>Team:</b> {{ performance.candidate.team }}
+<p/>
+<table>
+<tr><th>Score</th><th>Judge</th></tr>
+{% for s in scores %}
+	<tr><td>{{ s.score }}</td><td>{{ s.mentor }}</td></tr>
+{% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+<table>
+	<tr><th>Song</th>
+	<th>Date</th>
+	<th>Candidate</th>
+	<th>Average Score</th>
+	<th>Team</th>
+	<th>Team Score</th>
+	</tr>
+	{% for p in performances %}
+		<tr>
+			<td>{{ p.song }}</td>
+			<td>{{ p.date }}</td>
+			<td><a href="{% url 'candidate' p.candidate.pk %}">{{ p.candidate }}</a></td>
+			<td>{{ p.average_score }} <a href="{% url 'performance' p.pk %}" style="font-size:smaller;font-style:italic">(show scores)</a></td>
+			<td><a href="{% url 'team' p.candidate.team.pk %}">{{ p.candidate.team }}</a></td>
+			<td>{{ p.candidate.team.average_score|default:'-' }}</td>
+		</tr>
+	{% endfor %}
+</table>

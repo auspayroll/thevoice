@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<h1>Candidate: {{ candidate }}</h1>
+Dob: {{ candidate.dob|default:'-' }}&nbsp; Average Score: {{ candidate.average_score }}, &nbsp;Team: <a href="{% url 'team' candidate.team.pk %}">{{ candidate.team }}</a>, Teams' average score: {% if candidate.team %}{{ candidate.team.average_score }}{% endif %}
+<p/>
+{% include "performance_table.html" with performances=performances only %}
+{% endblock %}

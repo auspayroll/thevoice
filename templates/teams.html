@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<table>
+<tr><th>Team</th><th>Mentor</th><th>Average Score</th></tr>
+{% for team in teams %}
+<tr>
+	<td><a href="{% url 'team' team.pk %}">{{ team.name }}</a></td><td>{{ team.mentor }}</td><td>{{ team.average_score }}</td>
+</tr>
+
+{% endfor %}
+</table>
+{% endblock %}

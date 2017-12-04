@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<h1>TEAM: {{ team }}, (Mentor: {{team.mentor}})</h1><p/>
+<h2>Candidates</h2>
+{% include "candidate_table.html" with candidates=members only %}
+
+<h2>Performances</h2>
+{% include "performance_table.html" with performances=performances only %}
+{% endblock %}
+
+

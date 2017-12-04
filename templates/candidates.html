@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<h1>Candidates</h1>
+
+{% include "candidate_table.html" with candidates=candidates only %}
+
+{% endblock %}
