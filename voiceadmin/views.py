@@ -44,7 +44,7 @@ def team(request, team_pk):
     if is_member(request.user, 'admin'):
        team = get_object_or_404(Team, pk=team_pk) #display performance
     else:
-        team = get_object_or_404(Team, pk=team_pk, mentor=request.user)
+        team = get_object_or_404(Team, pk=team_pk, mentor=request.user.mentor)
 
     performances = Performance.objects.filter(candidate__team=team).order_by('-date')
     members = team.members.all()
@@ -63,7 +63,7 @@ def candidates(request):
     if is_member(request.user, 'admin'):
         candidates = Candidate.objects.all().order_by('last_name')
     else:
-        candidates = Candidate.objects.filter(team__mentor=request.user).order_by('last_name')
+        candidates = Candidate.objects.filter(team__mentor=request.user.mentor).order_by('last_name')
     return render(request, 'candidates.html', {'candidates': candidates})
 
 
@@ -72,9 +72,9 @@ def view_candidate(request, candidate_pk):
     if is_member(request.user, 'admin'):
         candidate = get_object_or_404(Candidate, pk=candidate_pk)
     elif is_member(request.user, 'mentor'):
-        candidate = get_object_or_404(Candidate, pk=candidate_pk, team__candidate=request.user)
+        candidate = get_object_or_404(Candidate, pk=candidate_pk, team__mentor=request.user.mentor)
     else:
-        candidate = get_object_or_404(Candidate, pk=candidate_pk)
+        candidate = get_object_or_404(Candidate, pk=candidate_pk, user=request.user)
 
     performances = candidate.candidate_performances.all()
     return render(request, 'candidate.html', {'candidate':candidate, 'performances': performances})

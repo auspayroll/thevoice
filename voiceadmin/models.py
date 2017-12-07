@@ -3,13 +3,16 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.validators import MaxValueValidator
 from .functions import update_average
+from django.contrib.auth.models import User
 
-class Person(models.Model):
+
+class Person(models.Model): 
 	class Meta:
 		abstract = True
 
 	last_name = models.CharField(max_length=200)
-	other_names = models.CharField(max_length=200)
+	other_names = models.CharField(max_length=200, null=True)
+	user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
 	def __unicode__(self):
 		if self.other_names:
@@ -34,14 +37,14 @@ class ScoreField(models.PositiveSmallIntegerField):
         super(ScoreField, self).__init__(verbose_name, name, *args, **kwargs)
 
 
-class Mentor(Person):
+class Mentor(Person): 
 	pass
 
 
 
 class Team(models.Model):
 	name = models.CharField(max_length=200)
-	mentor = models.ForeignKey(Mentor, on_delete=models.SET_NULL, null=True, blank=True)
+	mentor = models.ForeignKey(Mentor, on_delete=models.SET_NULL, null=True, blank=True, related_name='teams')
 	date_formed = models.DateField(blank=True, null=True)
 	average_score = models.FloatField(blank=True, null=True)
 	no_scores = models.IntegerField(default=0)
@@ -61,12 +64,25 @@ class Candidate(Person):
 	average_score = models.FloatField(default=0, blank=True, null=True)
 	no_scores = models.IntegerField(default=0)
 	team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, related_name='members')
+	last_name = models.CharField(max_length=200)
+	other_names = models.CharField(max_length=200)
 
 	def update_score(self, score, save=False):
 		self.average_score, self.no_scores = update_average(self.average_score, self.no_scores, score)
 		if save:
 			self.save()
 		return self.average_score, self.no_scores
+
+	@property
+	def mentor(self):
+		if self.team and self.team.mentor:
+			return str(self.team.mentor)
+
+	def __unicode__(self):
+		if self.other_names:
+			return "%s, %s" % (self.last_name, self.other_names)
+		return self.last_name
+
 
 
 class Performance(models.Model):
