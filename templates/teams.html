@@ -14,42 +14,11 @@
 	</div>
 </div>
 
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-<script src="https://unpkg.com/vue"></script>
+<script src="{% static 'js/axios.min.js' %}"></script>
+<script src="{% static 'js/lodash.min.js' %}"></script>
+<script src="{% static 'js/vue.js' %}"></script>
+<script src="{% static 'js/teamSearch.js' %}"></script>
 
-<script>
-	var app = new Vue({
-		el: '#app',
-		data: {
-			teamSearch: '',
-			teams: null
-		},
-
-		watch: {
-			teamSearch: function(){
-				this.lookupTeam()
-			}
-		},
-
-		methods: {
-			lookupTeam: _.debounce(function(){
-				that = this;
-				var search = encodeURI(this.teamSearch);
-				axios.get('/api/team_search?search='+search)
-				.then(function(response){
-					that.teams = response.data;
-				});
-			})
-		},
-
-		mounted: function(){
-			this.lookupTeam();
-		},
-
-		delimiters:['[[',']]']
-	});
-</script>
 <style>
   [v-cloak] {
     display: none;
