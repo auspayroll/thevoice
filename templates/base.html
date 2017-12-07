@@ -1,17 +1,35 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
+{% load user_tags %}
 
 {% block branding %}
 	<h1 id="site-name">The Voice</h1>
 {% endblock %}
 
 {% block breadcrumbs %}
+
 <div class="breadcrumbs">
-<a href="{% url 'teams' %}">{% trans 'Teams' %}</a> | 
-<a href="{% url 'candidates' %}">{% trans 'Candidates' %}</a> | 
+
+{% if request.user|in_group:'admin' %}
+	<a href="{% url 'teams' %}">{% trans 'Teams' %}</a> | 
+	<a href="{% url 'mentors' %}">{% trans 'Mentors' %}</a> |
+{% endif %}
+
+{% if request.user|in_group:'mentor' %}
+	<a href="{% url 'candidates' %}">{% trans 'Candidates' %}</a> | 
+{% endif %}
+
 <a href="{% url 'performances' %}">{% trans 'Performances' %}</a> | 
-<a href="{% url 'mentors' %}">{% trans 'Mentors' %}</a> |
+
+
+{% if request.user|in_group:'mentor' %}
+	{% for team in request.user.mentor.teams.all %}<a href="{% url 'team' team.pk %}">{{ team }}</a> | {% endfor %}
+{% endif %}
+
 <a href="{% url 'admin:logout' %}?next=/">{% trans 'Log out' %}</a>
-{% if title %} &rsaquo; {{ title }}{% endif %}
+
 </div>
+
+
+
 {% endblock %}

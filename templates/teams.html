@@ -2,13 +2,57 @@
 {% load i18n static %}
 
 {% block content %}
-<table>
-<tr><th>Team</th><th>Mentor</th><th>Average Score</th></tr>
-{% for team in teams %}
-<tr>
-	<td><a href="{% url 'team' team.pk %}">{{ team.name }}</a></td><td>{{ team.mentor }}</td><td>{{ team.average_score }}</td>
-</tr>
+<div id="app">
+	<div class="form-group">
+		<input class="form-group" type="text" v-model="teamSearch" placeholder="team name">
+	</div>
+	<div v-cloak>
+		<table>
+			<tr><th>Team</th><th>Mentor</th><th>Average Score</th></tr>
+			<tr v-for="team in teams"><td><a :href="team.web_url">[[ team.name ]]</a></td><td>[[ team.mentor_name ]]</td><td>[[ team.average_score ]]</td></tr>
+		</table>
+	</div>
+</div>
 
-{% endfor %}
-</table>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://unpkg.com/vue"></script>
+
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			teamSearch: '',
+			teams: null
+		},
+
+		watch: {
+			teamSearch: function(){
+				this.lookupTeam()
+			}
+		},
+
+		methods: {
+			lookupTeam: _.debounce(function(){
+				that = this;
+				var search = encodeURI(this.teamSearch);
+				axios.get('/api/team_search?search='+search)
+				.then(function(response){
+					that.teams = response.data;
+				});
+			})
+		},
+
+		mounted: function(){
+			this.lookupTeam();
+		},
+
+		delimiters:['[[',']]']
+	});
+</script>
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
 {% endblock %}

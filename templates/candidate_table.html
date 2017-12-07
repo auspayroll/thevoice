@@ -1,13 +1,17 @@
 
 <table>
-<tr><th>Name</th><th>Dob</th><th>Average Score</th><th>Team</th><th>Team Score</th></tr>
+<tr><th>Name</th><th>Dob</th>
+<th>Average Score</th>
+<th>Mentor</th>
+<th>Team</th><th>Team Score</th></tr>
 {% for c in candidates %}
 	<tr>
 		<td>{{ c }}</td>
 		<td>{{ c.dob }}</td>
 		<td>{{ c.average_score }}</td>
+		<td>{% if c.team and c.team.mentor %}{{ c.team.mentor }}{% endif %}</td>
 		<td><a href="{% url 'team' c.team.pk %}">{{ c.team }}</a></td>
-		<td>{{ c.team.average_score }}</td>
+		<td>{{ c.team.average_score|default:'-' }}</td>
 	</tr>
 {% endfor %}
 </table>
