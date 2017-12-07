@@ -6,7 +6,7 @@
 <th>Team</th><th>Team Score</th></tr>
 {% for c in candidates %}
 	<tr>
-		<td>{{ c }}</td>
+		<td><a href="{% url 'candidate' c.pk %}">{{ c }}</a></td>
 		<td>{{ c.dob }}</td>
 		<td>{{ c.average_score }}</td>
 		<td>{% if c.team and c.team.mentor %}{{ c.team.mentor }}{% endif %}</td>
