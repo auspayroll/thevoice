@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views as admin_views, mentor_views, candidate_views
+from . import views as admin_views
 from django.contrib.auth import views as auth_views
 #from django.contrib.auth.views import login, logout
 
