@@ -17,4 +17,8 @@ Unit test ...
 
 python manage.py test
 
+Run the server locally ...
+
+python manage.py runserver
+
 
