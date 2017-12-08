@@ -11,13 +11,13 @@ from .functions import in_group, is_member
 
 @login_required
 def index(request):
-    if False:
-        return mentor_index(request)
-    elif False:
-        return candidate_index(request)
+    if is_member(request.user, 'admin'):
+        return teams(request)
+    elif is_member(request.user, 'mentor'):
+        return candidates(request)
     else:
-        teams = Team.objects.all().prefetch_related('members').order_by('name')
-        return render(request, 'teams.html', {'teams': teams})
+        if request.user.candidate:
+            return view_candidate(request, request.user.candidate.pk)
 
 
 @login_required

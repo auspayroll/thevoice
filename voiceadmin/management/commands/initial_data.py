@@ -26,6 +26,9 @@ def choose(choices):
 def random_date():
     return now() - timedelta(days=randint(1,100))
 
+def random_dob():
+    return now()  - timedelta(days=(365*20 + randint(1,365)))
+
 class Command(BaseCommand):
     help = 'Initalize data'
 
@@ -73,7 +76,7 @@ class Command(BaseCommand):
 
             candidates = []
             for i in range(50):
-                candidate = Candidate.objects.create(last_name=choose(last_names), other_names=choose(first_names), team=choose(teams))
+                candidate = Candidate.objects.create(last_name=choose(last_names), other_names=choose(first_names), team=choose(teams), dob=random_dob())
                 candidates.append(candidate)
                 performance = Performance.objects.create(song=choose(songs), candidate=candidate, date=random_date())
                 for mentor in mentors:
@@ -81,7 +84,8 @@ class Command(BaseCommand):
 
             #create a user from one of the mentors
             choose_candidate = choose(candidates)
-            candidate_user, created = User.objects.update_or_create(username='candidate', defaults=dict(email='candidate@gmail.com', first_name=choose_candidate.other_names, 
+            candidate_user, created = User.objects.update_or_create(username='candidate', defaults=dict(email='candidate@gmail.com', 
+                first_name=choose_candidate.other_names, 
                 is_staff=True, last_name=choose_candidate.last_name, password=make_password('password')))
             self.stdout.write("Mentor username: mentor, password: password")
             if not created: # reset previous one-to-one mentor/user link

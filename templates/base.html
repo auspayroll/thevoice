@@ -13,13 +13,15 @@
 {% if request.user|in_group:'admin' %}
 	<a href="{% url 'teams' %}">{% trans 'Teams' %}</a> | 
 	<a href="{% url 'mentors' %}">{% trans 'Mentors' %}</a> |
+	<a href="{% url 'performances' %}">{% trans 'Performances' %}</a> | 
 {% endif %}
 
 {% if request.user|in_group:'mentor' %}
 	<a href="{% url 'candidates' %}">{% trans 'Candidates' %}</a> | 
+	<a href="{% url 'performances' %}">{% trans 'Performances' %}</a> | 
 {% endif %}
 
-<a href="{% url 'performances' %}">{% trans 'Performances' %}</a> | 
+
 
 
 {% if request.user|in_group:'mentor' %}
