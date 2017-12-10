@@ -43,10 +43,15 @@ class MentorSerializer(serializers.HyperlinkedModelSerializer):
 class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Performance
-        fields = ('song', 'date', 'candidate', 'average_score')
+        fields = ('song', 'date', 'candidate', 'average_score', 'url')
 
 
 class PerformanceScoreSerializer(serializers.HyperlinkedModelSerializer):
+    mentor_name = serializers.SerializerMethodField()
     class Meta:
         model = PerformanceScore
-        fields = ('performance', 'mentor', 'score')
+        fields = ('performance', 'score', 'mentor_name', 'mentor')
+
+    def get_mentor_name(self, obj):
+        if obj.mentor:
+           return obj.mentor.__unicode__()

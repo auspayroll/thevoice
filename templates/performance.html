@@ -1,19 +1,60 @@
 {% extends "base.html" %}
 {% load i18n static %}
+{% load user_tags %}
 
 {% block content %}
 
-<h1>Performance</h1>
+	<h1>Performance</h1>
 
-<b>Date</b>: {{ performance.date }} &nbsp;<b>Song:</b> {{ performance.song }} <br/>
-<b>Candidate:</b> {{ performance.candidate }} &nbsp;<b>Average Score:</b> {{ performance.average_score }}<br/>
-<b>Team:</b> {{ performance.candidate.team }}
-<p/>
-<table>
-<tr><th>Score</th><th>Judge</th></tr>
-{% for s in scores %}
-	<tr><td>{{ s.score }}</td><td>{{ s.mentor }}</td></tr>
-{% endfor %}
-</table>
+	<div id="app">
+		<b>Date</b>: {{ performance.date }} &nbsp;<b>Song:</b> {{ performance.song }} <br/>
+		<b>Candidate:</b> {{ performance.candidate }} &nbsp;<b>Average Score:</b> [[ average_score_display ]]<br/>
+		<b>Team:</b> {{ performance.candidate.team }}
+		<p/>
+		<table>
+		<tr><th>Score</th><th>Judge</th></tr>
+		{% for s in scores %}
+			<tr><td>{{ s.score }}</td><td>{{ s.mentor }}</td></tr>
+		{% endfor %}
+		<tr v-if="showScore"><td>[[ score ]]</td><td>Your Score</td></tr>
+		</table>
+		<p/>
+		<div class="input" :class="{invalid: $v.score.$error}">
+			<input class="form-group" type="text" v-model="score" placeholder="your score" :disabled="showScore" @input="$v.score.$touch()"> 
+			<p v-if="!$v.score.required">Score is required</p>
+			<p v-if="!$v.score.minVal || !$v.score.maxVal">Score must be between [[ $v.score.$params.minVal.min ]] and [[ $v.score.$params.maxVal.max ]]</p>
+			<button class="btn btn-primary" @click="submitScore" :disabled="showScore || $v.score.$invalid">Submit Score</button>
+			
+		</div>
+	</div>
+
+
+	{% if request.user|in_group:'mentor' %}
+		<script src="{% static 'js/axios.min.js' %}"></script>
+		<script src="{% static 'js/lodash.min.js' %}"></script>
+		<script src="{% static 'js/vue.js' %}"></script>
+		<script src="{% static 'js/vuelidate.min.js' %}"></script>
+		<script src="{% static 'js/validators.min.js' %}"></script>
+		<script src="{% static 'js/score.js' %}"></script>
+		<script>
+		 	Vue.set(app, 'score', 0);
+		 	Vue.set(app, 'no_scores', {{ scores|length }})
+			Vue.set(app, 'average_score_display', {{performance.average_score}});
+			Vue.set(app, 'performance', "{% url 'performance-detail' performance.pk %}");
+			Vue.set(app, 'token', '{{csrf_token}}')
+		 </script>
+
+		<style>
+		  [v-cloak] {
+		    display: none;
+		  }
+
+		  .input.invalid input{
+		  	border: 1px solid red;
+		  	background-color: #ffc9aa;
+		  }
+
+		</style>
+	{% endif %}
 
 {% endblock %}

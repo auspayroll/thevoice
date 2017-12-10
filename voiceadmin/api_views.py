@@ -1,10 +1,12 @@
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from .models import Candidate, Team, Mentor, Performance, PerformanceScore
 from .serializers import CandidateSerializer, TeamSerializer, PerformanceSerializer, PerformanceScoreSerializer, MentorSerializer
 from rest_framework import generics, permissions
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 
 
 
@@ -20,6 +22,26 @@ def team_search(request):
     serializer_context = {'request': Request(request)}
     serializer = TeamSerializer(teams, many=True, context=serializer_context)
     return Response(serializer.data)
+
+
+class PerformanceScoreList(generics.ListCreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = PerformanceScore.objects.all()
+    serializer_class = PerformanceScoreSerializer
+
+    def post(self, request, format=None):
+        """
+        create a new score for a performance, automatically set the mentor from request
+        """
+        data = request.data.copy()
+        if hasattr(request.user,'mentor'):
+            data['mentor'] = reverse('mentor-detail', args=[request.user.mentor.pk])
+
+        serializer = PerformanceScoreSerializer(data=data, context=dict(request=request))
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CandidateList(generics.ListCreateAPIView):
@@ -50,11 +72,6 @@ class PerformanceList(generics.ListCreateAPIView):
 class PerformanceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
-
-
-class PerformanceScoreList(generics.ListCreateAPIView):
-    queryset = PerformanceScore.objects.all()
-    serializer_class = PerformanceScoreSerializer
 
 
 class PerformanceScoreDetail(generics.RetrieveUpdateDestroyAPIView):

@@ -107,6 +107,9 @@ class PerformanceScore(models.Model):
 	mentor = models.ForeignKey(Mentor, on_delete=models.SET_NULL, null=True)
 	score = ScoreField(default=0)
 
+	#class Meta:
+	#	unique_together = ('mentor', 'performance')
+
 	def save(self, *args, **kwargs):
 		#update candidate average
 		if self.performance and self.performance.candidate: 
